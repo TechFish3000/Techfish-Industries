@@ -1,0 +1,45 @@
+
+localizedName: Plastanium Drill
+description: '''
+A configurable drill that can mine anything, anywhere but requires major setup.
+
+Every layer decended has a 20% chance to break the head and a 20% chance to miss and go 1 or 2 layers further.
+
+Every layer ascended has a chance to reset the drill back to 0.
+
+Layer 0: Nothing
+Layer 1-2: Sand
+Layer 2-4: Copper
+Layer 2-6: Coal
+Layer 3-7: Lead
+Layer 6-8: Titanium
+Layer 8-10: Thorium
+
+'''
+
+size: 3
+
+outputItem: lead/2
+craftTime: 80
+
+hasItems: true
+
+requirements: [
+  plastanium/50
+  thorium/40
+  titanium/30
+  lead/20
+  copper/10
+]
+consumes: {
+  power: 4
+  liquid: {
+    liquid: cryofluid
+    amount: 0.3
+    
+  }
+}
+category: production
+ambientSound: build
+ambientSoundVolume: 0.05
+research: laser-drill
