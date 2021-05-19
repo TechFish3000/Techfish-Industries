@@ -16,12 +16,11 @@ Layer 6-8: Titanium
 Layer 8-10: Thorium
 
 '''
-
 size: 3
-
+configurable: true
 outputItem: lead/2
 craftTime: 80
-
+itemCapacity: 60
 hasItems: true
 
 requirements: [
@@ -32,11 +31,12 @@ requirements: [
   copper/10
 ]
 consumes: {
-  power: 4
-  liquid: {
-    liquid: cryofluid
-    amount: 0.3
-    
+  
+  items: {
+    items: [
+      
+      titanium/50
+    ]
   }
 }
 category: production
