@@ -22,7 +22,7 @@ outputItem: lead/2
 craftTime: 80
 itemCapacity: 60
 hasItems: true
-
+hasPower: true
 requirements: [
   plastanium/50
   thorium/40

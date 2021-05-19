@@ -48,12 +48,12 @@ const plastDrill = extend(GenericCrafter, "plastanium-drill", {
 		this.regions[0] = Core.atlas.find(this.name);
 		print("loaded lmao")
 		this.regions[3] = Core.atlas.find(this.name + "-rotator");
-		
+
 		//this.regions[4] = Core.atlas.find(this.name + "-top");
 	},
 
 	// buildConfiguration(table) {
-		
+
 
 	// 	table.Button(Icon.upOpen, Styles.clearTransi, run(() => {
 	// 		//configure the tile to signal that it has been pressed (this sync on client to server)
@@ -63,9 +63,9 @@ const plastDrill = extend(GenericCrafter, "plastanium-drill", {
 	// 		//configure the tile to signal that it has been pressed (this sync on client to server)
 	// 		configure(1)
 	// 	}))
-		
+
 	// },
-	
+
 
 
 
@@ -118,17 +118,18 @@ const plastDrill = extend(GenericCrafter, "plastanium-drill", {
 });
 let count = 40
 plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDrill, {
-	created(){
-        this.super$created()
-        print("loaded")
-		this.TFIdepth = 1
+	created() {
+		this.super$created()
+		print("loaded")
+		this.TFIdepth = 0
+		this.targetDepth = 0
 		this.mode = 0 // 0= adj, 1=mining
-    },
-    // load(){
-    //     this.super$load()
-    //     dict = {}
-    // },
-	
+	},
+	// load(){
+	//     this.super$load()
+	//     dict = {}
+	// },
+
 	draw() {
 		//if (this.count == 0) {
 		//	this.depth = this.TFIdepth + 1
@@ -143,8 +144,8 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 		//var liquid = combustionComp.consumes.get(ConsumeType.liquid).liquid;
 		Draw.rect(plastDrill.regions[3], this.x, this.y, this.totalProgress * 2)
 		font.draw(String(this.TFIdepth), this.x, this.y + 2, Color.valueOf(depthcolors[this.TFIdepth]), 0.4, true, 1)
-		
-		font.draw(String(modeNames[this.mode]), this.x, this.y -1, Color.valueOf(modeColours[this.mode]), 0.2, false, 1)
+
+		font.draw(String(modeNames[this.mode]), this.x, this.y - 1, Color.valueOf(modeColours[this.mode]), 0.2, false, 1)
 		//Draw.rect(combustionComp.regions[4], this.x, this.y);
 
 
@@ -155,86 +156,106 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 	},
 	buildConfiguration(parent) {
 		const table = parent.fill();
-		
+
 
 		const adjust = table.button(Icon.pause,
 			Styles.clearTransi, () => {
-			// Cycle through modes
-			this.configure(1)
-			//print(this.cons.valid())
-		}).size(40).disabled(boolf(b => this.mode == 0)).get();
+				// Cycle through modes
+				this.configure(1)
+				//print(this.cons.valid())
+			}).size(40).disabled(boolf(b => this.mode == 0)).get();
 
 		const mine = table.button(Icon.play,
 			Styles.clearTransi, () => {
-			// Cycle through modes
-			this.configure(2)
-			//print(this.cons.valid())
-		}).size(40).disabled(boolf(b => this.mode == 1)).get();
+				// Cycle through modes
+				this.configure(2)
+				//print(this.cons.valid())
+			}).size(40).disabled(boolf(b => this.mode == 1)).get();
 
 		const descend = table.button(Icon.download,
 			Styles.clearTransi, () => {
-			// Cycle through modes
-			this.configure(3)
-			//print(this.cons.valid())
-		}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || this.mode == 1)).get();
+				// Cycle through modes
+				this.configure(3)
+				//print(this.cons.valid())
+			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || this.mode == 1)).get();
 
 		const reset = table.button(Icon.upOpen,
 			Styles.clearTransi, () => {
-			// Cycle through modes
-			this.configure(4)
-			//print(this.cons.valid())
-		}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || this.mode == 1)).get();
-		
+				// Cycle through modes
+				this.configure(4)
+				//print(this.cons.valid())
+			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || this.mode == 1)).get();
+
 		const resett = table.button(Icon.upOpen,
 			Styles.clearTransi, () => {
-			// Cycle through modes
-			
-			print(this.block.consumes.all().length)
-			print(this.block.consumes.all()[this.block.consumes.all().length - 1].type())
-			
-			//print(this.cons.valid())
-		}).size(40).get();
-		
+				// Cycle through modes
+
+				print(this.block.consumes.all().length)
+				print(this.block.consumes.all()[this.block.consumes.all().length - 1].type())
+
+				//print(this.cons.valid())
+			}).size(40).get();
+
 	},
 	//override configure event
 	configured(tile, value) {
 		//make sure this silo has the items it needs to fire
-		if (value == 1){
+		if (value == 1) {
 			this.mode = 0
 			this.block.consumes.remove(this.block.consumes.getPower().type())
 			print(this.block.consumes.item(tit, 50))
 			this.block.consumes.init()
-			this.cons.update()
+			//this.cons.update()
 		}
-		if (value == 2){
+		if (value == 2) {
 			this.mode = 1
 			this.block.consumes.remove(this.block.consumes.getItem().type())
 			print(this.block.consumes.power(6))
 			this.block.consumes.init()
-			this.cons.update()
+			//this.cons.update()
 		}
-		if (value == 3){
+		if (value == 3) {
 			this.TFIdepth = this.TFIdepth + 1
-			
+
 		}
-		if (value == 4){
+		if (value == 4) {
 			this.TFIdepth = 0
 		}
-		
-		
-		
-		// print(this.TFIdepth)
-		
-		// print(this.tileX())
-		// print(this.tileY())
-		// print(this.TFIdepth)
-		// print(this.cons)
-		// print("---")
-		//print(typeof this)
-		//make this effect occur at the tile location
+	},
+	updateTile() {
+		if (this.consValid() && this.mode == 0 && this.TFIdepth != this.targetDepth) {
 
+			progress += getProgressIncrease(craftTime);
+			totalProgress += delta();
+			warmup = Mathf.lerpDelta(warmup, 1, 0.02);
 
-		//create 10 bullets at this tile's location with random rotation and velocity/lifetime
+			if (Mathf.chanceDelta(updateEffectChance)) {
+				updateEffect.at(getX() + Mathf.range(size * 4), getY() + Mathf.range(size * 4));
+			}
+		} else {
+			warmup = Mathf.lerp(warmup, 0, 0.02);
+		}
 
+		if (progress >= 1) {
+			this.consume();
+
+			if (this.TFIdepth < this.targetDepth){
+				this.TFIdepth += 1
+			}
+			if (this.TFIdepth > this.targetDepth){
+				this.TFIdepth -= 1
+			}
+			
+
+			craftEffect.at(x, y);
+			progress %= 1;
+		}
+
+		if (outputItem != null && timer(timerDump, dumpTime)) {
+			dump(outputItem.item);
+		}
+
+	
 	}
+
 });
