@@ -32,11 +32,15 @@
 //     }
 // })
 
+const lootTable = [[], ["sand"], ["sand", "copper", "coal"], ["copper", "coal", "lead"], ["copper", "coal", "lead"], ["coal", "lead"], ["coal", "lead", "titanium"], ["lead", "titanium"], ["titanium", "thorium"], ["thorium"], ["surge-alloy"]]
+const allPossible = ["sand", "copper", "coal", "lead", "titanium", "thorium", "surge-alloy"]
+const surgeTimeMult = 4
+
 const depthcolors = ["646464", "f5e187", "c2915d", "c97f34", "c97f34", "634370", "522c94", "8243f0", "b14aff", "d91cff", "ee00ff"]
 const modeNames = ["Adjusting", "Mining"]
 const modeColours = ["FF0000", "00FF00"]
 
-let tit = Vars.content.getByName(ContentType.item, "titanium")
+const hardened_titanium = Vars.content.getByName(ContentType.item, "techfish-industries-hardened-titanium")
 
 
 print("lod")
@@ -117,13 +121,22 @@ const plastDrill = extend(GenericCrafter, "plastanium-drill", {
 
 });
 let count = 40
+let mode = 0
+
 plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDrill, {
 	created() {
 		this.super$created()
 		print("loaded")
 		this.TFIdepth = 0
 		this.targetDepth = 0
-		this.mode = 0 // 0= adj, 1=mining
+		this.miningTarget = 0
+		this.surgeCounter = 0
+		mode = 0 // 0= adj, 1=mining
+		if (this.block.consumes.all()[0].type() == ConsumeType.power) {
+			this.block.consumes.remove(this.block.consumes.getPower().type())
+			print(this.block.consumes.item(Vars.content.getByName(ContentType.item, "techfish-industries-hardened-titanium"), 250))
+			this.block.consumes.init()
+		}
 	},
 	// load(){
 	//     this.super$load()
@@ -145,7 +158,10 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 		Draw.rect(plastDrill.regions[3], this.x, this.y, this.totalProgress * 2)
 		font.draw(String(this.TFIdepth), this.x, this.y + 2, Color.valueOf(depthcolors[this.TFIdepth]), 0.4, true, 1)
 
-		font.draw(String(modeNames[this.mode]), this.x, this.y - 1, Color.valueOf(modeColours[this.mode]), 0.2, false, 1)
+		font.draw(String(modeNames[mode]), this.x, this.y - 6, Color.valueOf(modeColours[mode]), 0.2, false, 1)
+		if (this.TFIdepth != this.targetDepth) {
+			font.draw("(" + String(this.targetDepth) + ")", this.x, this.y + 8, Color.valueOf(depthcolors[this.targetDepth]), 0.2, false, 1)
+		}
 		//Draw.rect(combustionComp.regions[4], this.x, this.y);
 
 
@@ -163,36 +179,39 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 				// Cycle through modes
 				this.configure(1)
 				//print(this.cons.valid())
-			}).size(40).disabled(boolf(b => this.mode == 0)).get();
+			}).size(40).disabled(boolf(b => mode == 0)).get();
 
 		const mine = table.button(Icon.play,
 			Styles.clearTransi, () => {
 				// Cycle through modes
 				this.configure(2)
 				//print(this.cons.valid())
-			}).size(40).disabled(boolf(b => this.mode == 1)).get();
+			}).size(40).disabled(boolf(b => mode == 1)).get();
 
 		const descend = table.button(Icon.download,
 			Styles.clearTransi, () => {
 				// Cycle through modes
 				this.configure(3)
 				//print(this.cons.valid())
-			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || this.mode == 1)).get();
+			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || mode == 1)).get();
 
 		const reset = table.button(Icon.upOpen,
 			Styles.clearTransi, () => {
 				// Cycle through modes
 				this.configure(4)
 				//print(this.cons.valid())
-			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || this.mode == 1)).get();
+			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || mode == 1)).get();
 
-		const resett = table.button(Icon.upOpen,
+		const debug = table.button(Icon.upOpen,
 			Styles.clearTransi, () => {
 				// Cycle through modes
-
-				print(this.block.consumes.all().length)
-				print(this.block.consumes.all()[this.block.consumes.all().length - 1].type())
-
+				print("-=-=-=-")
+				for (let i = 0; i < this.block.consumes.all().length; i++) {
+					print(this.block.consumes.all()[i].type())
+				}
+				print(this.block.consumes.all())
+				print("Cons Valid: " + String(this.cons.valid()))
+				print("-=-=-=-")
 				//print(this.cons.valid())
 			}).size(40).get();
 
@@ -201,61 +220,115 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 	configured(tile, value) {
 		//make sure this silo has the items it needs to fire
 		if (value == 1) {
-			this.mode = 0
+			mode = 0
 			this.block.consumes.remove(this.block.consumes.getPower().type())
-			print(this.block.consumes.item(tit, 50))
+			print(this.block.consumes.item(Vars.content.getByName(ContentType.item, "techfish-industries-hardened-titanium"), 250))
 			this.block.consumes.init()
 			//this.cons.update()
 		}
 		if (value == 2) {
-			this.mode = 1
+			mode = 1
 			this.block.consumes.remove(this.block.consumes.getItem().type())
 			print(this.block.consumes.power(6))
 			this.block.consumes.init()
 			//this.cons.update()
 		}
 		if (value == 3) {
-			this.TFIdepth = this.TFIdepth + 1
+			this.targetDepth = this.targetDepth + 1
 
 		}
 		if (value == 4) {
-			this.TFIdepth = 0
+			this.targetDepth = 0
 		}
 	},
 	updateTile() {
-		if (this.consValid() && this.mode == 0 && this.TFIdepth != this.targetDepth) {
+		if (this.cons.valid() && mode == 0 && this.TFIdepth != this.targetDepth) {
 
-			progress += getProgressIncrease(craftTime);
-			totalProgress += delta();
-			warmup = Mathf.lerpDelta(warmup, 1, 0.02);
+			this.progress += this.getProgressIncrease(this.block.craftTime);
+			this.totalProgress += this.delta();
+			this.warmup = Mathf.lerpDelta(this.warmup, 1, 0.02);
 
-			if (Mathf.chanceDelta(updateEffectChance)) {
-				updateEffect.at(getX() + Mathf.range(size * 4), getY() + Mathf.range(size * 4));
+			if (Mathf.chanceDelta(this.block.updateEffectChance)) {
+				this.block.updateEffect.at(this.x + Mathf.range(this.block.size * 4), this.y + Mathf.range(this.block.size * 4));
 			}
-		} else {
-			warmup = Mathf.lerp(warmup, 0, 0.02);
+		}
+		else if (this.cons.valid() && mode == 1) {
+			this.progress += this.getProgressIncrease(this.block.craftTime);
+			this.totalProgress += this.delta();
+			this.warmup = Mathf.lerpDelta(this.warmup, 1, 0.02);
+
+			if (Mathf.chanceDelta(this.block.updateEffectChance)) {
+				this.block.updateEffect.at(this.x + Mathf.range(this.block.size * 4), this.y + Mathf.range(this.block.size * 4));
+			}
+		}
+		else {
+			this.warmup = Mathf.lerp(this.warmup, 0, 0.02);
 		}
 
-		if (progress >= 1) {
-			this.consume();
+		if (this.progress >= 1) {
+			if (mode == 0) {
 
-			if (this.TFIdepth < this.targetDepth){
-				this.TFIdepth += 1
-			}
-			if (this.TFIdepth > this.targetDepth){
-				this.TFIdepth -= 1
-			}
-			
+				this.consume();
 
-			craftEffect.at(x, y);
-			progress %= 1;
+				if (this.TFIdepth < this.targetDepth) {
+					this.TFIdepth += 1
+				}
+				if (this.TFIdepth > this.targetDepth) {
+					this.TFIdepth -= 1
+				}
+
+
+				this.block.craftEffect.at(this.x, this.y);
+				this.progress %= 1;
+			}
+			let outsum = 0
+
+			for (let k = 0; k < allPossible.length; k++) {
+				outsum += this.items.get(Vars.content.getByName(ContentType.item, allPossible[k]))
+			}
+
+
+
+
+			if (mode == 1 && outsum < this.block.itemCapacity) {
+				this.consume();
+
+				if (this.TFIdepth == 10) {
+					if (this.surgeCounter == 0) {
+						this.offload(Vars.content.getByName(ContentType.item, lootTable[this.TFIdepth][0]));
+						this.surgeCounter++
+					}
+					else {
+						this.surgeCounter++
+						this.surgeCounter %= surgeTimeMult
+					}
+				}
+
+				else if (lootTable[this.TFIdepth].length > 1) {
+					this.miningTarget++
+					this.miningTarget %= lootTable[this.TFIdepth].length
+					this.offload(Vars.content.getByName(ContentType.item, lootTable[this.TFIdepth][this.miningTarget]));
+				}
+				else if (this.TFIdepth == 0) {
+					// nothing lol
+				}
+				else if (lootTable[this.TFIdepth].length == 1) {
+					this.offload(Vars.content.getByName(ContentType.item, lootTable[this.TFIdepth][0]))
+				};
+				this.block.craftEffect.at(this.x, this.y);
+				this.progress %= 1;
+
+			}
+
+
+
+		}
+		if (this.outputItem != null && this.timer(timerDump, dumpTime)) {
+			this.dump(this.outputItem.item);
 		}
 
-		if (outputItem != null && timer(timerDump, dumpTime)) {
-			dump(outputItem.item);
-		}
 
-	
+
 	}
 
 });

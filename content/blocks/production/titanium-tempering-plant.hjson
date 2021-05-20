@@ -1,0 +1,32 @@
+type: GenericSmelter
+name: Titanium Tempering Plant
+description: Tempers titanium alongside lead to harden it.
+
+size: 3
+hasPower: true
+
+hasItems: true
+craftTime: 240
+updateEffect: smeltsmoke
+consumes: {
+  power: 0.7
+  items: {
+    items: [
+      titanium/10
+      lead/2
+    ]
+  }
+  
+}
+requirements: [
+  lead/50
+  titanium/20
+  thorium/80
+  silicon/60
+  
+]
+category: crafting
+research: silicon-crucible
+idleSound: respawning
+idleSoundVolume: 0.5
+outputItem: hardened-titanium/10

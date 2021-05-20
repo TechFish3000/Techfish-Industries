@@ -3,9 +3,11 @@ localizedName: Plastanium Drill
 description: '''
 A configurable drill that can mine anything, anywhere but requires major setup.
 
-Every layer decended has a 20% chance to break the head and a 20% chance to miss and go 1 or 2 layers further.
+Every layer dug in adjusting mode requires 500 titanium to fix the drill head, but the drill will only require power once it has reached the layer and put in mining mode.
 
-Every layer ascended has a chance to reset the drill back to 0.
+All drills share the same operating mode at all times.
+
+Whenever a new drill is placed, all drills will be reset to adjusting mode.
 
 Layer 0: Nothing
 Layer 1-2: Sand
@@ -13,20 +15,21 @@ Layer 2-4: Copper
 Layer 2-6: Coal
 Layer 3-7: Lead
 Layer 6-8: Titanium
-Layer 8-10: Thorium
+Layer 8-9: Thorium
+Layer 10: Surge Alloy (Note: Surge alloy mines at 0.25x speed)
 
 '''
 size: 3
 configurable: true
 outputItem: lead/2
 craftTime: 80
-itemCapacity: 60
+itemCapacity: 500
 hasItems: true
 hasPower: true
 requirements: [
   plastanium/50
   thorium/40
-  titanium/30
+  hardened-titanium/30
   lead/20
   copper/10
 ]
@@ -35,7 +38,7 @@ consumes: {
   items: {
     items: [
       
-      titanium/50
+      hardened-titanium/250
     ]
   }
 }

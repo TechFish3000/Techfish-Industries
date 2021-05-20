@@ -1,11 +1,16 @@
   name: techfish-industries
-displayName: "[grey]Tech[green]fish[] Industries"
+displayName: "Techfish Industries"
 author: '''
   Main Dev: Techfish3000
+  Sprites: stolen from random people, mainly example mod and EyeOfDarkness
   '''
 description:
   '''
-  pogg
+  A Remaster of all of my previous mods in one package and for v6.
+
+  Current Problems:
+  - Maybe not multiplayer compatible, not tested
+  - Plastanium drills reset depth after reload
   '''
-version: 0.0.1 Super-Alpha
+version: 0.1.0 First (beta) Release
 minGameVersion: 126.2
