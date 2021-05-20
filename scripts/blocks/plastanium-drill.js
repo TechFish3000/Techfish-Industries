@@ -202,18 +202,18 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 				//print(this.cons.valid())
 			}).size(40).disabled(boolf(b => (this.tile.entity != null && !this.cons.valid()) || mode == 1)).get();
 
-		const debug = table.button(Icon.upOpen,
-			Styles.clearTransi, () => {
-				// Cycle through modes
-				print("-=-=-=-")
-				for (let i = 0; i < this.block.consumes.all().length; i++) {
-					print(this.block.consumes.all()[i].type())
-				}
-				print(this.block.consumes.all())
-				print("Cons Valid: " + String(this.cons.valid()))
-				print("-=-=-=-")
-				//print(this.cons.valid())
-			}).size(40).get();
+		// const debug = table.button(Icon.upOpen,
+		// 	Styles.clearTransi, () => {
+		// 		// Cycle through modes
+		// 		print("-=-=-=-")
+		// 		for (let i = 0; i < this.block.consumes.all().length; i++) {
+		// 			print(this.block.consumes.all()[i].type())
+		// 		}
+		// 		print(this.block.consumes.all())
+		// 		print("Cons Valid: " + String(this.cons.valid()))
+		// 		print("-=-=-=-")
+		// 		//print(this.cons.valid())
+		// 	}).size(40).get();
 
 	},
 	//override configure event

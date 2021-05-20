@@ -3,11 +3,17 @@ localizedName: Plastanium Drill
 description: '''
 A configurable drill that can mine anything, anywhere but requires major setup.
 
-Every layer dug in adjusting mode requires 500 titanium to fix the drill head, but the drill will only require power once it has reached the layer and put in mining mode.
+Every layer dug in adjusting mode requires 250 titanium to fix the drill head, but the drill will only require power once it has reached the layer and put in mining mode.
 
 All drills share the same operating mode at all times.
 
 Whenever a new drill is placed, all drills will be reset to adjusting mode.
+
+First and second button set the drills to adjusting and mining mode, respectively
+Third button increases target depth by 1 layer
+Fourth decreases target layer back to 0.
+
+NOTE: Drill config will be lost upon reload. looking for fix rn.
 
 Layer 0: Nothing
 Layer 1-2: Sand
