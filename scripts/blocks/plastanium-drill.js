@@ -329,6 +329,28 @@ plastDrill.buildType = () => extend(GenericCrafter.GenericCrafterBuild, plastDri
 
 
 
+	}, 
+	read(a, b){
+		this.super$read(a, b)
+		mode = a.i()
+		if (mode == 1){
+			this.block.consumes.remove(this.block.consumes.getItem().type())
+			print(this.block.consumes.power(6))
+			this.block.consumes.init()
+		}
+		this.TFIdepth = a.i();
+        this.targetDepth = a.i();
+		this.miningTarget = a.i();
+		this.surgeCounter = a.i();
+		
+	},
+	write(a){
+		this.super$write(a)
+		a.i(mode)
+		a.i(this.TFIdepth)
+		a.i(this.targetDepth)
+		a.i(this.miningTarget)
+		a.i(this.surgeCounter)
 	}
 
 });
